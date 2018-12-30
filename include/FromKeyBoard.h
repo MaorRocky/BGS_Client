@@ -14,6 +14,7 @@ public:
 
 private:
     ConnectionHandler handler;
+    bool isTerminate;
 };
 #endif //BOOST_ECHO_CLIENT_FROMKEYBOARD_H
 
