@@ -13,6 +13,8 @@ ConnectionHandler::ConnectionHandler(string host, short port): host_(host), port
 ConnectionHandler::~ConnectionHandler() {
     close();
 }
+
+ConnectionHandler::ConnectionHandler(const ConnectionHandler &other):host_(other.host_), port_(other.port_), io_service_(), socket_(io_service_)  {}
  
 bool ConnectionHandler::connect() {
     std::cout << "Starting connect to " 
