@@ -5,8 +5,10 @@
 
 class FromServer {
 public:
-    FromServer(ConnectionHandler &handler);
+    FromServer(ConnectionHandler &_handler);
 
+private:
+    ConnectionHandler handler;
 };
 
 #endif //BOOST_ECHO_CLIENT_FROMSERVER_H
