@@ -5,10 +5,14 @@
 
 class FromServer {
 public:
-    FromServer(ConnectionHandler &handler);
+    FromServer(ConnectionHandler &handler, bool isTerminate);
     void run();
 private:
+    bool isTerminate;
     ConnectionHandler handler;
+    int getNextBytesPart(char bytes[], int toStart);
+    short bytesToShort(char* bytesArr);
+    void bytesArrayToString(char bytes[], std::string str, int start);
 
 };
 

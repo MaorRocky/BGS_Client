@@ -183,7 +183,10 @@ int main(int argc, char *argv[]) {
                         }
                         answer = "";
                     }
-                } else if (std::stoi(answer.substr(2, 4)) == 6) {
+                } else if(std::stoi(answer.substr(2, 4)) == 3) {
+                   /*TODO we need to end the thread*/
+                }
+                else if (std::stoi(answer.substr(2, 4)) == 6) {
                     toPrint += answer.substr(2, 4);
                     toPrint += " ";
                     toPrint += answer.substr(4, 6);
