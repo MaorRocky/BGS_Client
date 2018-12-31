@@ -6,6 +6,9 @@
 class FromServer {
 public:
     FromServer(ConnectionHandler &handler);
+    void run();
+private:
+    ConnectionHandler handler;
 
 };
 
