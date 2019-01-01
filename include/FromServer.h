@@ -20,9 +20,9 @@ public:
 private:
     bool isTerminate;
     ConnectionHandler* handler;
-    int getNextBytesPart(char bytes[], int toStart);
+    void getNextBytesPart(std::vector<char> bytes);
     short bytesToShort(char* bytesArr);
-    void bytesArrayToString(char bytes[], std::string str, int start);
+    void bytesArrayToString(std::vector<char> bytes, std::string str, int start);
 
 };
 
