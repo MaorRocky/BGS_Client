@@ -1,17 +1,28 @@
+#include <stdlib.h>
 #include <connectionHandler.h>
-#include "FromKeyBoard.h"
+#include <mutex>
+#include <thread>
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
+#include <iostream>
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <regex>
 
 using namespace std;
 using namespace boost;
 
+#include "FromKeyBoard.h"
 
-FromKeyBoard::FromKeyBoard(ConnectionHandler &handler) : handler(handler), isTerminate(false) {}
+
+FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) :isTerminate(false) {
+    thandler = handler;
+}
 
 void FromKeyBoard::operator()() {
     while (!isTerminate) {
-        const short bufsize = 1024;
+        const short bufsize = 4096;
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
         std::string line(buf);
@@ -37,13 +48,11 @@ void FromKeyBoard::operator()() {
         char delimiter = '\0';
         split(results, line, is_any_of(" "));
         if (std::regex_search(line, REGISTER)) {
-            std::cout << "im here and im register" << std::endl;
             char opcode = '1';
             toSend += opcode;
             toSend += results[1];
             toSend += delimiter;
             toSend += results[2];
-            std::cout << toSend << std::endl;
         } else if (std::regex_search(line, LOGIN)) {
             char opcode = '2';
             toSend += opcode;
@@ -100,9 +109,7 @@ void FromKeyBoard::operator()() {
             toSend += results[1];
         }
 
-
-        handler.sendLine(toSend);
-
+        (*thandler).sendLine(toSend);
 
         /*if (!handler.sendLine(toSend)) {
             std::cout << "Disconnected. Exiting...\n" << std::endl;

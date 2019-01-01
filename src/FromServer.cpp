@@ -12,7 +12,8 @@
 using namespace std;
 using namespace boost;
 
-FromServer::FromServer(ConnectionHandler &handler, bool isTerminate) : handler(handler), isTerminate(isTerminate) {}
+FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :thandler(handler), isTerminate(isTerminate) {
+}
 
 void FromServer::operator()() {
     bool terminate(false);
@@ -106,16 +107,16 @@ void FromServer::operator()() {
 
             }
         }
-        std::cout << toPrint << endl;
+
     }
-    handler.close();
+    (*thandler).close();
 }
 
     int FromServer::getNextBytesPart(char bytes[], int toStart) {
         int i(0);
-        while (handler.getBytes(bytes, 1) != '\0') {
+        while ((*thandler).getBytes(bytes, 1) != '\0') {
             char c;
-            bytes[toStart + i] = handler.getBytes(&c, 1);
+            bytes[toStart + i] = (*thandler).getBytes(&c, 1);
             i++;
         }
         bytes[i + toStart] = '\0';

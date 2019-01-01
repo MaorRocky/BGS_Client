@@ -12,8 +12,8 @@ int main(int argc, char *argv[]) {
     std::string host = "127.0.0.1";
     short port = 7777;
 
-    ConnectionHandler connectionHandler(host, port);
-    if (!connectionHandler.connect()) {
+    ConnectionHandler* connectionHandler = new ConnectionHandler(host, port);
+    if (!(*connectionHandler).connect()) {
         std::cerr << "Cannot connect to " << host << ":" << port << std::endl;
         return 1;
     }
@@ -21,13 +21,15 @@ int main(int argc, char *argv[]) {
     FromKeyBoard fromKeyBoard(connectionHandler);
     FromServer fromServer(connectionHandler, false);
 
-    fromKeyBoard.operator()();
-    fromServer.operator()();
+    //fromKeyBoard.operator()();
+    //fromServer.operator()();
 
-    //std::thread th1(fromKeyBoard);
-    //std::thread th2(fromServer);
-    //th1.join();
-    //th2.join();
+    std::thread th1(std::ref(fromKeyBoard));
+    std::thread th2(std::ref(fromServer));
+
+    th1.join();
+    th2.join();
+
 
 
 
