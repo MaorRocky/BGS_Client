@@ -110,6 +110,9 @@ void FromKeyBoard::operator()() {
             std::string content("");
             for (int i = 1; i < results.size(); i++) {
                 content += results[i];
+                if (i < results.size()-1) {
+                    content += " ";
+                }
             }
             (*handler).sendLine(content);
             //**********PM*******
@@ -125,6 +128,9 @@ void FromKeyBoard::operator()() {
             std:: string content("");
             for (int i = 2; i < results.size(); i++) {
                 content += results[i];
+                if (i < results.size()-1) {
+                    content += " ";
+                }
             }
             (*handler).sendLine(content);
             //**********USERLIST*******

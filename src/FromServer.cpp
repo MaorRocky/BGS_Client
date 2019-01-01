@@ -18,16 +18,16 @@ FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :handler(ha
 }
 
 void FromServer::operator()() {
-    cout << "I am here1" << endl;
     bool terminate(false);
     while (!terminate) {
-        char bytes[1024];
-        int index = getNextBytesPart(bytes, 0);
+        std::vector<char> bytes;
+        getNextBytesPart(bytes);
         char *opcodeBytes = new char[2];
         opcodeBytes[0] = bytes[0];
         opcodeBytes[1] = bytes[1];
         short opcode = bytesToShort(opcodeBytes);
         string toPrint("");
+        // ***********NOTIFICATION***********
         if (opcode == 9) {
             toPrint += "NOTIFICATION ";
             if (bytes[2] == '0') {
@@ -35,9 +35,13 @@ void FromServer::operator()() {
             } else if (bytes[2] == '1') {
                 toPrint += "Public ";
             }
+            // adding username
             bytesArrayToString(bytes, toPrint, 3);
-            getNextBytesPart(bytes, index);
-            bytesArrayToString(bytes, toPrint, index);
+            // adding content
+            bytes.clear();
+            getNextBytesPart(bytes);
+            bytesArrayToString(bytes, toPrint, 0);
+            //**********ERROR**********
         } else if (opcode == 11) {
             toPrint += "ERROR ";
             char *messageOpcodeBytes = new char[2];
@@ -45,7 +49,8 @@ void FromServer::operator()() {
             messageOpcodeBytes[1] = bytes[3];
             short messageOpcode = bytesToShort(messageOpcodeBytes);
             toPrint += std::to_string(messageOpcode);
-
+            bytes.clear();
+            //**********ACK***********
         } else if (opcode == 10) {
             toPrint += "ACK ";
             char *messageOpcodeBytes = new char[2];
@@ -53,8 +58,10 @@ void FromServer::operator()() {
             messageOpcodeBytes[1] = bytes[3];
             short messageOpcode = bytesToShort(messageOpcodeBytes);
             toPrint += std::to_string(messageOpcode);
+            toPrint += " ";
             if (messageOpcode == 4) {
-                toPrint += " ";
+                //******ACK FOLLOW********
+                // adding number of users to follow
                 char *numOfUsersBytes = new char[2];
                 numOfUsersBytes[0] = bytes[4];
                 numOfUsersBytes[1] = bytes[5];
@@ -63,13 +70,17 @@ void FromServer::operator()() {
                 toPrint += std::to_string(numUsers);
                 toPrint += " ";
                 bytesArrayToString(bytes, toPrint, 6);
+                bytes.clear();
+                // adding names of users to follow
                 for (int i = 1; i < numUsers; i++) {
-                    int tmp = index;
-                    index = getNextBytesPart(bytes, tmp);
-                    bytesArrayToString(bytes, toPrint, tmp);
+                    getNextBytesPart(bytes);
+                    bytesArrayToString(bytes, toPrint, 0);
+                    toPrint += " ";
+                    bytes.clear();
                 }
+                //*******ACK USERLIST*******
             } else if (messageOpcode == 7) {
-                toPrint += " ";
+                // adding number of users
                 char *numOfUsersBytes = new char[2];
                 numOfUsersBytes[0] = bytes[4];
                 numOfUsersBytes[1] = bytes[5];
@@ -78,27 +89,31 @@ void FromServer::operator()() {
                 toPrint += std::to_string(numUsers);
                 toPrint += " ";
                 bytesArrayToString(bytes, toPrint, 6);
+                bytes.clear();
+                // adding names of users
                 for (int i = 1; i < numUsers; i++) {
-                    int tmp = index;
-                    index = getNextBytesPart(bytes, tmp);
-                    bytesArrayToString(bytes, toPrint, tmp);
+                    getNextBytesPart(bytes);
+                    bytesArrayToString(bytes, toPrint, 0);
+                    toPrint += " ";
+                    bytes.clear();
                 }
+                //*******ACK STAT**********
             } else if (messageOpcode == 8) {
-                toPrint += " ";
+                // adding number of posts
                 char *numOfPostsBytes = new char[2];
                 numOfPostsBytes[0] = bytes[4];
                 numOfPostsBytes[1] = bytes[5];
                 short numOfPosts = bytesToShort(numOfPostsBytes);
                 toPrint += std::to_string(numOfPosts);
                 toPrint += " ";
-
+                // adding number of followers
                 char *numOfFollowersBytes = new char[2];
                 numOfFollowersBytes[0] = bytes[6];
                 numOfFollowersBytes[1] = bytes[7];
                 short numOfFollowers = bytesToShort(numOfFollowersBytes);
                 toPrint += std::to_string(numOfFollowers);
                 toPrint += " ";
-
+                // adding number of following
                 char *numOfFollowingBytes = new char[2];
                 numOfFollowingBytes[0] = bytes[8];
                 numOfFollowingBytes[1] = bytes[9];
@@ -106,8 +121,6 @@ void FromServer::operator()() {
                 toPrint += std::to_string(numOfFollowings);
             } else if (messageOpcode == 3) {
                 terminate = true;
-
-
             }
         }
         std::cout << toPrint << endl;
@@ -115,26 +128,21 @@ void FromServer::operator()() {
     (*handler).close();
 }
 
-    int FromServer::getNextBytesPart(char bytes[], int toStart) {
-        int i(0);
-        while ((*handler).getBytes(bytes, 1) != '\0') {
-            char c;
-            bytes[toStart + i] = (*handler).getBytes(&c, 1);
-            i++;
-        }
-        bytes[i + toStart] = '\0';
-        return i + toStart + 1;
+void FromServer::getNextBytesPart(std::vector<char> bytes) {
+    char c;
+    while ((*handler).getBytes(&c, 1) != '\0') {
+        bytes.push_back(c);
     }
+}
 
-    short FromServer::bytesToShort(char *bytesArr) {
+short FromServer::bytesToShort(char *bytesArr) {
         short result = (short) ((bytesArr[0] & 0xff) << 8);
         result += (short) (bytesArr[1] & 0xff);
         return result;
-    }
+}
 
-    void FromServer::bytesArrayToString(char *bytes, string str, int start) {
+void FromServer::bytesArrayToString(std::vector<char> bytes, string str, int start) {
         for (int i = start; bytes[i] != '\0'; i++) {
             str += bytes[i];
         }
-        str += " ";
     }
