@@ -48,7 +48,9 @@ void FromKeyBoard::operator()() {
         char delimiter = '\0';
         split(results, line, is_any_of(" "));
         if (std::regex_search(line, REGISTER)) {
-            char opcode = '1';
+            short opcpode(1);
+            char arr[2];
+            shortToBytes(opcpode,arr);
             toSend += opcode;
             toSend += results[1];
             toSend += delimiter;
@@ -111,9 +113,11 @@ void FromKeyBoard::operator()() {
 
         (*thandler).sendLine(toSend);
 
-        /*if (!handler.sendLine(toSend)) {
-            std::cout << "Disconnected. Exiting...\n" << std::endl;
-            break;
-        }*/
+
+    }
+    void shortToBytes(short num, char* bytesArr)
+    {
+        bytesArr[0] = ((num >> 8) & 0xFF);
+        bytesArr[1] = (num & 0xFF);
     }
 }

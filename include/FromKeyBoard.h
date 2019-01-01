@@ -21,6 +21,7 @@ public:
 private:
     ConnectionHandler* thandler;
     bool isTerminate;
+    void shortToBytes(short num, char* bytesArr)
 };
 #endif //BOOST_ECHO_CLIENT_FROMKEYBOARD_H
 
