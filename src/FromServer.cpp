@@ -132,6 +132,7 @@ void FromServer::getNextBytesPart(std::vector<char> bytes) {
     char c;
     while ((*handler).getBytes(&c, 1) != '\0') {
         bytes.push_back(c);
+        cout << c << endl;
     }
 }
 

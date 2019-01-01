@@ -19,9 +19,8 @@ using namespace boost;
 FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) : handler(handler), isTerminate(false) {}
 
 void FromKeyBoard::operator()() {
-    cout << "I am here2" << endl;
     while (!isTerminate) {
-        const short bufsize = 4096;
+        const short bufsize = 1024;
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
         std::string line(buf);
