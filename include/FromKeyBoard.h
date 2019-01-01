@@ -17,9 +17,11 @@ class FromKeyBoard {
 public:
     FromKeyBoard(ConnectionHandler* handler);
     void operator()();
+    void shortToBytes(short num, char bytesArr[]);
+    void merge(std::vector<char> first, char second[]);
 
 private:
-    ConnectionHandler* thandler;
+    ConnectionHandler* handler;
     bool isTerminate;
 };
 #endif //BOOST_ECHO_CLIENT_FROMKEYBOARD_H

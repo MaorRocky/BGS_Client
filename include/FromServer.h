@@ -19,7 +19,7 @@ public:
     void operator()();
 private:
     bool isTerminate;
-    ConnectionHandler* thandler;
+    ConnectionHandler* handler;
     int getNextBytesPart(char bytes[], int toStart);
     short bytesToShort(char* bytesArr);
     void bytesArrayToString(char bytes[], std::string str, int start);

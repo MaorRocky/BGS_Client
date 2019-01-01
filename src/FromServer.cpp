@@ -14,7 +14,7 @@
 using namespace std;
 using namespace boost;
 
-FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :thandler(handler), isTerminate(isTerminate) {
+FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :handler(handler), isTerminate(isTerminate) {
 }
 
 void FromServer::operator()() {
@@ -22,6 +22,7 @@ void FromServer::operator()() {
     bool terminate(false);
     while (!terminate) {
         char bytes[1024];
+        (*handler).getLine(bytes);
         int index = getNextBytesPart(bytes, 0);
         char *opcodeBytes = new char[2];
         opcodeBytes[0] = bytes[0];
@@ -53,6 +54,8 @@ void FromServer::operator()() {
             messageOpcodeBytes[1] = bytes[3];
             short messageOpcode = bytesToShort(messageOpcodeBytes);
             toPrint += std::to_string(messageOpcode);
+
+            //************ACK for follow/unfollow************//
             if (messageOpcode == 4) {
                 toPrint += " ";
                 char *numOfUsersBytes = new char[2];
@@ -64,9 +67,9 @@ void FromServer::operator()() {
                 toPrint += " ";
                 bytesArrayToString(bytes, toPrint, 6);
                 for (int i = 1; i < numUsers; i++) {
-                    int tmp = index;
-                    index = getNextBytesPart(bytes, tmp);
-                    bytesArrayToString(bytes, toPrint, tmp);
+                    char nextName[1024];
+                    (*handler).getLine(nextName);
+                    bytesArrayToString(nextName, toPrint, 0);
                 }
             } else if (messageOpcode == 7) {
                 toPrint += " ";
@@ -112,14 +115,14 @@ void FromServer::operator()() {
         }
         std::cout << toPrint << endl;
     }
-    (*thandler).close();
+    (*handler).close();
 }
 
     int FromServer::getNextBytesPart(char bytes[], int toStart) {
         int i(0);
-        while ((*thandler).getBytes(bytes, 1) != '\0') {
+        while ((*handler).getBytes(bytes, 1) != '\0') {
             char c;
-            bytes[toStart + i] = (*thandler).getBytes(&c, 1);
+            bytes[toStart + i] = (*handler).getBytes(&c, 1);
             i++;
         }
         bytes[i + toStart] = '\0';

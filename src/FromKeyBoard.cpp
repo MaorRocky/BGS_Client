@@ -16,9 +16,7 @@ using namespace boost;
 #include "FromKeyBoard.h"
 
 
-FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) :isTerminate(false) {
-    thandler = handler;
-}
+FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) : handler(handler), isTerminate(false) {}
 
 void FromKeyBoard::operator()() {
     cout << "I am here2" << endl;
@@ -45,15 +43,33 @@ void FromKeyBoard::operator()() {
                         std::regex_constants::ECMAScript | std::regex_constants::icase);
 
         std::vector<string> results;
-        string toSend;
+        string toSend("");
         char delimiter = '\0';
         split(results, line, is_any_of(" "));
         if (std::regex_search(line, REGISTER)) {
-            char opcode = '1';
-            toSend += opcode;
+            short opcode = 1;
+            char opcodeBytes[2];
+            //sending opcode
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendLine(opcodeBytes, 2);
+            //sending username
+            char tmpName[results[1].length() + 1];
+            std::strcpy(tmpName, results[1].c_str());
+            char name[results[1].length() + 2];
+            for (int i = 0; i < results[1].length() + 1; i++) {
+                name[i] = tmpName[i];
+            }
+            name[results[1].length() + 1] = '\0';
+            int j = (int)results[1].length() + 2;
+            (*handler).sendLine(name, j);
+            //sending password
+            char tmpPassword[results[2].length() + 1];
+            std::strcpy(tmpPassword, results[2].c_str());
+
             toSend += results[1];
             toSend += delimiter;
             toSend += results[2];
+
         } else if (std::regex_search(line, LOGIN)) {
             char opcode = '2';
             toSend += opcode;
@@ -110,11 +126,21 @@ void FromKeyBoard::operator()() {
             toSend += results[1];
         }
         cout << toSend << endl;
-        (*thandler).sendLine(toSend);
+        (*handler).sendLine(toSend);
 
         /*if (!handler.sendLine(toSend)) {
             std::cout << "Disconnected. Exiting...\n" << std::endl;
             break;
         }*/
     }
+}
+
+void FromKeyBoard::shortToBytes(short num, char *bytesArr) {
+    bytesArr[0] = ((num >> 8) & 0xFF);
+    bytesArr[1] = (num & 0xFF);
+}
+
+void FromKeyBoard::merge(std::vector<char> first, char *second) {
+
+    for (int i = 0; i < second)
 }
