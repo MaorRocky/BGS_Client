@@ -12,10 +12,11 @@
 
 using namespace std;
 using namespace boost;
+
 #include "FromKeyBoard.h"
 
 
-FromKeyBoard::FromKeyBoard(ConnectionHandler &handler): handler(handler), isTerminate(false) {}
+FromKeyBoard::FromKeyBoard(ConnectionHandler &handler) : handler(handler), isTerminate(false) {}
 
 void FromKeyBoard::run() {
     while (!isTerminate) {
@@ -57,6 +58,7 @@ void FromKeyBoard::run() {
             toSend += delimiter;
             toSend += results[2];
         } else if (std::regex_search(line, LOGOUT)) {
+            isTerminate = true;
             char opcode = '3';
             toSend += opcode;
         } else if (std::regex_search(line, FOLLOW)) {
@@ -105,9 +107,11 @@ void FromKeyBoard::run() {
             toSend += results[1];
         }
 
-        if (!handler.sendLine(toSend)) {
+        handler.sendLine(toSend);
+
+        /*if (!handler.sendLine(toSend)) {
             std::cout << "Disconnected. Exiting...\n" << std::endl;
             break;
-        }
+        }*/
     }
 }
