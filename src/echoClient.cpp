@@ -2,17 +2,15 @@
 #include <connectionHandler.h>
 #include <FromKeyBoard.h>
 #include <FromServer.h>
+#include <iostream>
+#include <thread>
 
 /**
 * This code assumes that the server replies the exact text the client sent it (as opposed to the practical session example)
 */
 int main(int argc, char *argv[]) {
-    if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " host port" << std::endl << std::endl;
-        return -1;
-    }
-    std::string host = argv[1];
-    short port = atoi(argv[2]);
+    std::string host = "127.0.0.1";
+    short port = 7777;
 
     ConnectionHandler connectionHandler(host, port);
     if (!connectionHandler.connect()) {
@@ -20,12 +18,26 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FromKeyBoard fromKeyBoard = new FromKeyBoard(connectionHandler);
-    FromServer *fromServer = new FromServer(connectionHandler, false);
+    FromKeyBoard fromKeyBoard(connectionHandler);
+    FromServer fromServer(connectionHandler, false);
+
+    fromKeyBoard.operator()();
+    fromServer.operator()();
+
+    //std::thread th1(fromKeyBoard);
+    //std::thread th2(fromServer);
+    //th1.join();
+    //th2.join();
+
+
+
+
+
+
 
 
     //From here we will see the rest of the ehco client implementation:
-    while (1) {
+    /*while (1) {
         const short bufsize = 1024;
         char buf[bufsize];
         std::cin.getline(buf, bufsize);
@@ -55,5 +67,5 @@ int main(int argc, char *argv[]) {
         answer.resize(len - 1);
         std::cout << "Reply: " << answer << " " << len << " bytes " << std::endl << std::endl;
     }
-    return 0;
+    return 0;*/
 }

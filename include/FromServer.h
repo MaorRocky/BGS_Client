@@ -6,7 +6,7 @@
 class FromServer {
 public:
     FromServer(ConnectionHandler &handler, bool isTerminate);
-    void run();
+    void operator()();
 private:
     bool isTerminate;
     ConnectionHandler handler;

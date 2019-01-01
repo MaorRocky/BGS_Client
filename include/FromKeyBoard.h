@@ -10,7 +10,7 @@
 class FromKeyBoard {
 public:
     FromKeyBoard(ConnectionHandler& handler);
-    void run();
+    void operator()();
 
 private:
     ConnectionHandler handler;
