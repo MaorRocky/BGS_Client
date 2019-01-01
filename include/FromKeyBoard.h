@@ -19,9 +19,9 @@ public:
     void operator()();
 
 private:
-    ConnectionHandler* thandler;
+    ConnectionHandler* handler;
     bool isTerminate;
-    void shortToBytes(short num, char* bytesArr)
+    void shortToBytes(short num, char bytesArr[]);
 };
 #endif //BOOST_ECHO_CLIENT_FROMKEYBOARD_H
 

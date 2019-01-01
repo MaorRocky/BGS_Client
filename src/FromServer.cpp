@@ -1,24 +1,28 @@
-#include <connectionHandler.h>
 #include "FromServer.h"
 #include <stdlib.h>
+#include <connectionHandler.h>
 #include <mutex>
 #include <thread>
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <iostream>
-
+#include <iterator>
+#include <string>
+#include <regex>
 
 using namespace std;
 using namespace boost;
 
-FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :thandler(handler), isTerminate(isTerminate) {
+FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :handler(handler), isTerminate(isTerminate) {
 }
 
 void FromServer::operator()() {
+    cout << "I am here1" << endl;
     bool terminate(false);
     while (!terminate) {
         char bytes[1024];
+        (*handler).getLine(bytes);
         int index = getNextBytesPart(bytes, 0);
         char *opcodeBytes = new char[2];
         opcodeBytes[0] = bytes[0];
@@ -107,16 +111,16 @@ void FromServer::operator()() {
 
             }
         }
-
+        std::cout << toPrint << endl;
     }
-    (*thandler).close();
+    (*handler).close();
 }
 
     int FromServer::getNextBytesPart(char bytes[], int toStart) {
         int i(0);
-        while ((*thandler).getBytes(bytes, 1) != '\0') {
+        while ((*handler).getBytes(bytes, 1) != '\0') {
             char c;
-            bytes[toStart + i] = (*thandler).getBytes(&c, 1);
+            bytes[toStart + i] = (*handler).getBytes(&c, 1);
             i++;
         }
         bytes[i + toStart] = '\0';

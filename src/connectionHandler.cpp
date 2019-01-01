@@ -15,7 +15,6 @@ ConnectionHandler::~ConnectionHandler() {
     close();
 }
 
-/*copy constructor*/
 ConnectionHandler::ConnectionHandler(const ConnectionHandler &other) :
         host_(other.host_), port_(other.port_), io_service_(), socket_(io_service_) {}
 
@@ -74,6 +73,10 @@ bool ConnectionHandler::getLine(std::string &line) {
 
 bool ConnectionHandler::sendLine(std::string &line) {
     return sendFrameAscii(line, '\0');
+}
+
+void ConnectionHandler::sendOpcode(char *opcodeBytes) {
+    sendBytes(opcodeBytes, 2);
 }
 
 bool ConnectionHandler::getFrameAscii(std::string &frame, char delimiter) {

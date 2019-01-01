@@ -16,11 +16,10 @@ using namespace boost;
 #include "FromKeyBoard.h"
 
 
-FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) :isTerminate(false) {
-    thandler = handler;
-}
+FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) : handler(handler), isTerminate(false) {}
 
 void FromKeyBoard::operator()() {
+    cout << "I am here2" << endl;
     while (!isTerminate) {
         const short bufsize = 4096;
         char buf[bufsize];
@@ -48,9 +47,15 @@ void FromKeyBoard::operator()() {
         char delimiter = '\0';
         split(results, line, is_any_of(" "));
         if (std::regex_search(line, REGISTER)) {
-            short opcpode(1);
-            char arr[2];
-            shortToBytes(opcpode,arr);
+            //sending opcode
+            short opcode = 1;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            //sending username
+            (*handler).sendLine(results[1]);
+            //sending password
+            (*handler).sendLine(results[2]);
             toSend += opcode;
             toSend += results[1];
             toSend += delimiter;
@@ -110,14 +115,17 @@ void FromKeyBoard::operator()() {
             toSend += opcode;
             toSend += results[1];
         }
+        cout << toSend << endl;
+        (*handler).sendLine(toSend);
 
-        (*thandler).sendLine(toSend);
-
-
+        /*if (!handler.sendLine(toSend)) {
+            std::cout << "Disconnected. Exiting...\n" << std::endl;
+            break;
+        }*/
     }
-    void shortToBytes(short num, char* bytesArr)
-    {
-        bytesArr[0] = ((num >> 8) & 0xFF);
-        bytesArr[1] = (num & 0xFF);
-    }
+}
+
+void FromKeyBoard::shortToBytes(short num, char *bytesArr) {
+    bytesArr[0] = ((num >> 8) & 0xFF);
+    bytesArr[1] = (num & 0xFF);
 }

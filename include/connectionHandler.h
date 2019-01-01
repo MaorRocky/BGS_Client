@@ -51,7 +51,8 @@ public:
     // Close down the connection properly.
     void close();
 
-    boost::asio::io_service getIoService();
+    void sendOpcode(char opcodeBytes[]);
+
  
 }; //class ConnectionHandler
  
