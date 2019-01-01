@@ -1,13 +1,15 @@
-#include <connectionHandler.h>
 #include "FromServer.h"
 #include <stdlib.h>
+#include <connectionHandler.h>
 #include <mutex>
 #include <thread>
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <iostream>
-
+#include <iterator>
+#include <string>
+#include <regex>
 
 using namespace std;
 using namespace boost;
@@ -16,6 +18,7 @@ FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :handler(ha
 }
 
 void FromServer::operator()() {
+    cout << "I am here1" << endl;
     bool terminate(false);
     while (!terminate) {
         char bytes[1024];
@@ -51,8 +54,6 @@ void FromServer::operator()() {
             messageOpcodeBytes[1] = bytes[3];
             short messageOpcode = bytesToShort(messageOpcodeBytes);
             toPrint += std::to_string(messageOpcode);
-
-            //************ACK for follow/unfollow************//
             if (messageOpcode == 4) {
                 toPrint += " ";
                 char *numOfUsersBytes = new char[2];
@@ -64,9 +65,9 @@ void FromServer::operator()() {
                 toPrint += " ";
                 bytesArrayToString(bytes, toPrint, 6);
                 for (int i = 1; i < numUsers; i++) {
-                    char nextName[1024];
-                    (*handler).getLine(nextName);
-                    bytesArrayToString(nextName, toPrint, 0);
+                    int tmp = index;
+                    index = getNextBytesPart(bytes, tmp);
+                    bytesArrayToString(bytes, toPrint, tmp);
                 }
             } else if (messageOpcode == 7) {
                 toPrint += " ";
@@ -110,7 +111,7 @@ void FromServer::operator()() {
 
             }
         }
-
+        std::cout << toPrint << endl;
     }
     (*handler).close();
 }
