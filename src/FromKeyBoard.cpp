@@ -16,9 +16,12 @@ using namespace boost;
 #include "FromKeyBoard.h"
 
 
-FromKeyBoard::FromKeyBoard(ConnectionHandler &handler) : handler(handler), isTerminate(false) {}
+FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) :isTerminate(false) {
+    thandler = handler;
+}
 
 void FromKeyBoard::operator()() {
+    cout << "I am here2" << endl;
     while (!isTerminate) {
         const short bufsize = 4096;
         char buf[bufsize];
@@ -106,8 +109,8 @@ void FromKeyBoard::operator()() {
             toSend += opcode;
             toSend += results[1];
         }
-
-        handler.sendLine(toSend);
+        cout << toSend << endl;
+        (*thandler).sendLine(toSend);
 
         /*if (!handler.sendLine(toSend)) {
             std::cout << "Disconnected. Exiting...\n" << std::endl;
