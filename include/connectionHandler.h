@@ -53,6 +53,8 @@ public:
 
     void sendOpcode(char opcodeBytes[]);
 
+    char getNextByte();
+
  
 }; //class ConnectionHandler
  
