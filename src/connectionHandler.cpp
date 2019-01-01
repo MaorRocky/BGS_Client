@@ -45,6 +45,7 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
         if (error)
             throw boost::system::system_error(error);
     } catch (std::exception &e) {
+        cout << "I am the other problem" << std::endl;
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
     }
@@ -61,6 +62,7 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
         if (error)
             throw boost::system::system_error(error);
     } catch (std::exception &e) {
+        cout << "I am the problem" << std::endl;
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
     }

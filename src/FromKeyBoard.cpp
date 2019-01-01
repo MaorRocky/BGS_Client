@@ -43,9 +43,9 @@ void FromKeyBoard::operator()() {
                         std::regex_constants::ECMAScript | std::regex_constants::icase);
 
         std::vector<string> results;
-        string toSend;
         char delimiter = '\0';
         split(results, line, is_any_of(" "));
+        //**********Register**********
         if (std::regex_search(line, REGISTER)) {
             //sending opcode
             short opcode = 1;
@@ -56,72 +56,94 @@ void FromKeyBoard::operator()() {
             (*handler).sendLine(results[1]);
             //sending password
             (*handler).sendLine(results[2]);
-            toSend += opcode;
-            toSend += results[1];
-            toSend += delimiter;
-            toSend += results[2];
+            //**********LOGIN*******
         } else if (std::regex_search(line, LOGIN)) {
-            char opcode = '2';
-            toSend += opcode;
-            toSend += results[1];
-            toSend += delimiter;
-            toSend += results[2];
+            //sending opcode
+            short opcode = 2;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            //sending username
+            (*handler).sendLine(results[1]);
+            //sending password
+            (*handler).sendLine(results[2]);
+            //**********LOGIN*******
         } else if (std::regex_search(line, LOGOUT)) {
             isTerminate = true;
-            char opcode = '3';
-            toSend += opcode;
+            //sending opcode
+            short opcode = 3;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            //**********FOLLOW*******
         } else if (std::regex_search(line, FOLLOW)) {
-            char opcode = '4';
-            toSend += opcode;
+            //sending opcode
+            short opcode = 4;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            // sending follow or unfollow
             char isFollow;
             if (results[1] == "0") {
                 isFollow = '0';
             } else if (results[1] == "1") {
                 isFollow = '1';
             }
-            toSend += isFollow;
+            (*handler).sendBytes(&isFollow, 1);
+            //sending number of users to follow
             short numOfUsers = (short) stoi(results[2]);
-            toSend += numOfUsers;
+            char number[2];
+            shortToBytes(numOfUsers, number);
+            (*handler).sendOpcode(number);
+            // sending usernames to follow
             for (int i = 3; i < results.size(); i++) {
-                toSend += results[i];
-                if (i < results.size() - 1) {
-                    toSend += delimiter;
-                }
+                (*handler).sendLine(results[i]);
             }
+            //**********POST*******
         } else if (std::regex_search(line, POST)) {
-            char opcode = '5';
-            toSend += opcode;
+            //sending opcode
+            short opcode = 5;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            // sending content
+            std::string content("");
             for (int i = 1; i < results.size(); i++) {
-                toSend += results[i];
-                if (i < results.size() - 1) {
-                    toSend += " ";
-                }
+                content += results[i];
             }
+            (*handler).sendLine(content);
+            //**********PM*******
         } else if (std::regex_search(line, PM)) {
-            char opcode = '6';
-            toSend += opcode;
-            toSend += results[1];
+            //sending opcode
+            short opcode = 6;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            // sending username
+            (*handler).sendLine(results[1]);
+            // sending personal message
+            std:: string content("");
             for (int i = 2; i < results.size(); i++) {
-                toSend += results[i];
-                if (i < results.size() - 1) {
-                    toSend += " ";
-                }
+                content += results[i];
             }
+            (*handler).sendLine(content);
+            //**********USERLIST*******
         } else if (std::regex_search(line, USERLIST)) {
-            char opcode = '7';
-            toSend += opcode;
+            //sending opcode
+            short opcode = 7;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            //**********STAT*******
         } else if (std::regex_search(line, STAT)) {
-            char opcode = '8';
-            toSend += opcode;
-            toSend += results[1];
+            //sending opcode
+            short opcode = 8;
+            char opcodeBytes[2];
+            shortToBytes(opcode, opcodeBytes);
+            (*handler).sendOpcode(opcodeBytes);
+            // sending username
+            (*handler).sendLine(results[1]);
         }
-        cout << toSend << endl;
-        (*handler).sendLine(toSend);
-
-        /*if (!handler.sendLine(toSend)) {
-            std::cout << "Disconnected. Exiting...\n" << std::endl;
-            break;
-        }*/
     }
 }
 

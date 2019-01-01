@@ -22,7 +22,6 @@ void FromServer::operator()() {
     bool terminate(false);
     while (!terminate) {
         char bytes[1024];
-        /*(*handler).getLine(bytes);*/
         int index = getNextBytesPart(bytes, 0);
         char *opcodeBytes = new char[2];
         opcodeBytes[0] = bytes[0];
@@ -132,9 +131,6 @@ void FromServer::operator()() {
         result += (short) (bytesArr[1] & 0xff);
         return result;
     }
-
-
-
 
     void FromServer::bytesArrayToString(char *bytes, string str, int start) {
         for (int i = start; bytes[i] != '\0'; i++) {
