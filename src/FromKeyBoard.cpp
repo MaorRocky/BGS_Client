@@ -4,11 +4,6 @@
 #include <thread>
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
-#include <iostream>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <regex>
 
 using namespace std;
 using namespace boost;
@@ -16,7 +11,7 @@ using namespace boost;
 #include "FromKeyBoard.h"
 
 
-FromKeyBoard::FromKeyBoard(ConnectionHandler* handler) : handler(handler), isTerminate(false) {}
+FromKeyBoard::FromKeyBoard(ConnectionHandler *handler) : handler(handler), isTerminate(false) {}
 
 void FromKeyBoard::operator()() {
     cout << "I am here2" << endl;
@@ -110,6 +105,8 @@ void FromKeyBoard::operator()() {
             std::string content("");
             for (int i = 1; i < results.size(); i++) {
                 content += results[i];
+                if (i < results.size() - 1)
+                    content += " ";
             }
             (*handler).sendLine(content);
             //**********PM*******
@@ -122,9 +119,11 @@ void FromKeyBoard::operator()() {
             // sending username
             (*handler).sendLine(results[1]);
             // sending personal message
-            std:: string content("");
+            std::string content("");
             for (int i = 2; i < results.size(); i++) {
                 content += results[i];
+                if (i < results.size() - 1)
+                    content += " ";
             }
             (*handler).sendLine(content);
             //**********USERLIST*******
