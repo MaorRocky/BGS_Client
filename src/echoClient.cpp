@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FromKeyBoard *fromKeyBoard = new FromKeyBoard(connectionHandler);
+    FromKeyBoard fromKeyBoard = new FromKeyBoard(connectionHandler);
     FromServer *fromServer = new FromServer(connectionHandler, false);
 
 
