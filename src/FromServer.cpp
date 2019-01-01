@@ -1,20 +1,9 @@
 #include "FromServer.h"
-#include <stdlib.h>
-#include <connectionHandler.h>
-#include <mutex>
-#include <thread>
-#include <bits/stdc++.h>
-#include <boost/algorithm/string.hpp>
-#include <iostream>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <regex>
 
 using namespace std;
 using namespace boost;
 
-FromServer::FromServer(ConnectionHandler* handler, bool isTerminate) :handler(handler), isTerminate(isTerminate) {
+FromServer::FromServer(ConnectionHandler *handler, bool isTerminate) : handler(handler), isTerminate(isTerminate) {
 }
 
 void FromServer::operator()() {
@@ -130,20 +119,22 @@ void FromServer::operator()() {
 
 void FromServer::getNextBytesPart(std::vector<char> bytes) {
     char c;
+    cout<<"im here"<<endl;
     while ((*handler).getBytes(&c, 1) != '\0') {
         bytes.push_back(c);
-        cout << c << endl;
+        cout << std::to_string(c) << endl;
     }
 }
 
+
 short FromServer::bytesToShort(char *bytesArr) {
-        short result = (short) ((bytesArr[0] & 0xff) << 8);
-        result += (short) (bytesArr[1] & 0xff);
-        return result;
+    short result = (short) ((bytesArr[0] & 0xff) << 8);
+    result += (short) (bytesArr[1] & 0xff);
+    return result;
 }
 
 void FromServer::bytesArrayToString(std::vector<char> bytes, string str, int start) {
-        for (int i = start; bytes[i] != '\0'; i++) {
-            str += bytes[i];
-        }
+    for (int i = start; bytes[i] != '\0'; i++) {
+        str += bytes[i];
     }
+}
