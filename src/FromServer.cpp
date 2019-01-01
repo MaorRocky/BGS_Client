@@ -22,6 +22,7 @@ void FromServer::operator()() {
     while (!terminate) {
         std::vector<char> bytes;
         getNextBytesPart(bytes);
+        cout << "I am back" << endl;
         char *opcodeBytes = new char[2];
         opcodeBytes[0] = bytes[0];
         opcodeBytes[1] = bytes[1];
@@ -132,13 +133,15 @@ void FromServer::getNextBytesPart(std::vector<char> bytes) {
     char c;
     while ((*handler).getBytes(&c, 1) != '\0') {
         bytes.push_back(c);
-        cout << c << endl;
+        cout << std::to_string(c) << endl;
     }
+    //(*handler).getBytes(&c, 1)
 }
 
 short FromServer::bytesToShort(char *bytesArr) {
         short result = (short) ((bytesArr[0] & 0xff) << 8);
         result += (short) (bytesArr[1] & 0xff);
+        //cout << "I am back again" << endl;
         return result;
 }
 

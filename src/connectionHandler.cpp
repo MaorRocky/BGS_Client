@@ -41,6 +41,7 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     try {
         while (!error && bytesToRead > tmp) {
             tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
+
         }
         if (error)
             throw boost::system::system_error(error);
@@ -71,6 +72,12 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 
 bool ConnectionHandler::getLine(std::string &line) {
     return getFrameAscii(line, '\0');
+}
+
+char ConnectionHandler::getNextByte() {
+    char c;
+    getBytes(&c, 1);
+    return c;
 }
 
 bool ConnectionHandler::sendLine(std::string &line) {
