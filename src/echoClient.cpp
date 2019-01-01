@@ -20,9 +20,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    FromKeyBoard fromKeyBoard = new FromKeyBoard(connectionHandler);
+    FromKeyBoard *fromKeyBoard = new FromKeyBoard(connectionHandler);
     FromServer *fromServer = new FromServer(connectionHandler, false);
-
 
     //From here we will see the rest of the ehco client implementation:
     while (1) {
