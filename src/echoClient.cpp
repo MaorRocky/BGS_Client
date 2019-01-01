@@ -4,11 +4,6 @@
 #include <thread>
 #include <bits/stdc++.h>
 #include <boost/algorithm/string.hpp>
-#include <iostream>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <regex>
 
 using namespace std;
 using namespace boost;
@@ -39,6 +34,7 @@ int main(int argc, char *argv[]) {
         std::cin.getline(buf, bufsize);
         std::string line(buf);
         int len = line.length();
+
         std::regex REGISTER("REGISTER",
                             std::regex_constants::ECMAScript | std::regex_constants::icase);
         std::regex LOGIN("LOGIN",
