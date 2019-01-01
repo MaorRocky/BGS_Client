@@ -15,6 +15,7 @@ ConnectionHandler::~ConnectionHandler() {
     close();
 }
 
+/*copy constructor*/
 ConnectionHandler::ConnectionHandler(const ConnectionHandler &other) :
         host_(other.host_), port_(other.port_), io_service_(), socket_(io_service_) {}
 
