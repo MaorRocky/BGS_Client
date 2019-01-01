@@ -16,8 +16,9 @@ using namespace boost;
 
 FromServer::FromServer(ConnectionHandler &handler, bool isTerminate) : handler(handler), isTerminate(isTerminate) {}
 
-void FromServer::run() {
-    while (!isTerminate) {
+void FromServer::operator()() {
+    bool terminate(false);
+    while (!terminate) {
         char bytes[1024];
         int index = getNextBytesPart(bytes, 0);
         char *opcodeBytes = new char[2];
@@ -102,14 +103,14 @@ void FromServer::run() {
                 short numOfFollowings = bytesToShort(numOfFollowingBytes);
                 toPrint += std::to_string(numOfFollowings);
             } else if (messageOpcode == 3) {
-                isTerminate = true;
-                handler.close();
+                terminate = true;
+
 
             }
         }
-
-
+        std::cout << toPrint << endl;
     }
+    handler.close();
 }
 
     int FromServer::getNextBytesPart(char bytes[], int toStart) {
