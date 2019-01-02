@@ -16,13 +16,14 @@
 class FromServer {
 public:
     FromServer(ConnectionHandler* handler, bool isTerminate);
-    void operator()();
+    std::string operator()();
 private:
     bool isTerminate;
     ConnectionHandler* handler;
     void getNextBytesPart(std::vector<char> bytes);
     short bytesToShort(char* bytesArr);
     void bytesArrayToString(std::vector<char> bytes, std::string str, int start);
+    void getVectorBytes(std::vector<char> bytes, int numOfBytes);
 
 };
 

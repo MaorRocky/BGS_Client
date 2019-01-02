@@ -17,17 +17,18 @@ int main(int argc, char *argv[]) {
         std::cerr << "Cannot connect to " << host << ":" << port << std::endl;
         return 1;
     }
+        FromKeyBoard fromKeyBoard(connectionHandler);
+        FromServer fromServer(connectionHandler, false);
+        std::thread th1(std::ref(fromKeyBoard));
+        std::thread th2(std::ref(fromServer));
 
-    FromKeyBoard fromKeyBoard(connectionHandler);
-    FromServer fromServer(connectionHandler, false);
+        th1.join();
+        th2.join();
 
-    //fromKeyBoard.operator()();
-    //fromServer.operator()();
 
-    std::thread th1(std::ref(fromKeyBoard));
-    std::thread th2(std::ref(fromServer));
 
-    th1.join();
-    th2.join();
+
 
 }
+
+
