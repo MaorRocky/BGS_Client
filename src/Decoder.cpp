@@ -14,19 +14,26 @@
 using namespace std;
 using namespace boost;
 
-Decoder::Decoder() {}
+//Decoder::Decoder() {}
 
-Decoder::Decoder(Decoder &other) {}
 
 std::string Decoder::decode(char nextByte) {
+    //cout << std::to_string(nextByte) << endl;
+    if (length == 0) {
+        bytes.clear();
+    }
     pushByte(nextByte);
-    if (length < 2) {
-        return "";
+    if (!afterOpcode && length < 2) {
+        afterOpcode = true;
+        return "I AM STILL NOT A VALID MESSAGE";
     }
     if (length == 2) {
         nextOpcodeBytes[0] = bytes[0];
         nextOpcodeBytes[1] = bytes[1];
         nextOpcode = bytesToShort(nextOpcodeBytes);
+        //cout << std::to_string(nextOpcode) << endl;
+        //cout << std::to_string(bytes[0]) << endl;
+        //cout << std::to_string(bytes[1]) << endl;
     }
     switch(nextOpcode) {
         case 9:
@@ -69,12 +76,14 @@ std::string Decoder::decode(char nextByte) {
             break;
 
         case 10:
+            cout << "I am in case 10" << endl;
             if (length == 4) { // adding message opcode
                 toReturn += "ACK ";
                 messageOpcodeBytes[0] = bytes[2];
                 messageOpcodeBytes[1] = bytes[3];
                 messageOpcode = bytesToShort(messageOpcodeBytes);
                 toReturn += to_string(messageOpcode);
+                cout << std::to_string(messageOpcode) << endl;
             }
             else if (length >= 4 && messageOpcode == (short)4) { // ACK for follow message
                 if (length == 6) { // adding number of users
@@ -141,8 +150,9 @@ std::string Decoder::decode(char nextByte) {
                     return tmp;
                 }
             }
-            else if (length == 4 && (messageOpcode == (short)1 || messageOpcode == (short)2 || messageOpcode == (short)3
+            if (length == 4 && (messageOpcode == (short)1 || messageOpcode == (short)2 || messageOpcode == (short)3
             || messageOpcode == (short)5 || messageOpcode == (short)6)) {
+                cout << toReturn << endl;
                 std::string tmp(toReturn);
                 reset();
                 return toReturn;
@@ -150,7 +160,7 @@ std::string Decoder::decode(char nextByte) {
             break;
 
     }
-    return "";
+    return "I AM STILL NOT A VALID MESSAGE";
 }
 
 void Decoder::pushByte(char nextByte) {
@@ -170,6 +180,7 @@ void Decoder::reset() {
     nextZeroByte = 0;
     toReturn = "";
     nextOpcode = 0;
+    afterOpcode = false;
 }
 
 void Decoder::fromVectorToString(std::vector<char> bytes, std::string str, int start) {

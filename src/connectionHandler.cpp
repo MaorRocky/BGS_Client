@@ -11,14 +11,12 @@ using std::string;
 ConnectionHandler::ConnectionHandler(string host, short port) : host_(host), port_(port), io_service_(),
                                                                 socket_(io_service_) {
 
+
 }
 
 ConnectionHandler::~ConnectionHandler() {
     close();
 }
-
-ConnectionHandler::ConnectionHandler(const ConnectionHandler &other) :
-        host_(other.host_), port_(other.port_), io_service_(), socket_(io_service_) {}
 
 bool ConnectionHandler::connect() {
     std::cout << "Starting connect to "
@@ -44,13 +42,16 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
         while (!error && bytesToRead > tmp) {
             tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
         }
-        if (error)
+        if (error) {
+            cout << "i have an error" << endl;
             throw boost::system::system_error(error);
+        }
     } catch (std::exception &e) {
         cout << "I am the other problem" << std::endl;
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
     }
+    //cout << std::to_string(bytes[0]) << endl;
     return true;
 }
 
@@ -64,7 +65,6 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
         if (error)
             throw boost::system::system_error(error);
     } catch (std::exception &e) {
-        cout << "I am the problem" << std::endl;
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
     }
@@ -95,8 +95,10 @@ bool ConnectionHandler::getFrameAscii(std::string &frame) {
     // Notice that the null character is not appended to the frame string.
     try {
         do {
-            frame = decoder.decode(getBytes(&ch, 1));
-        } while (frame.empty());
+            getBytes(&ch, 1);
+            frame = decoder.decode(ch);
+            //cout << std::to_string(ch) << endl;
+        } while (frame == "I AM STILL NOT A VALID MESSAGE");
     } catch (std::exception &e) {
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;

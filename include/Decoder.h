@@ -19,8 +19,8 @@ using namespace boost;
 
 class Decoder {
 public:
-    Decoder();
-    Decoder(Decoder &other);
+    //Decoder();
+
     std::string decode(char nextByte);
 private:
     std::vector<char> bytes;
@@ -32,6 +32,7 @@ private:
     short numOfUsers;
     char messageOpcodeBytes[2];
     short messageOpcode;
+    bool afterOpcode = false;
 
     void pushByte(char nextByte);
     short bytesToShort(char *bytesArr);
