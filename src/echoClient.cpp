@@ -20,13 +20,17 @@ int main(int argc, char *argv[]) {
     }
     FromKeyBoard fromKeyBoard(connectionHandler);
     std::thread th1(std::ref(fromKeyBoard));
-    th1.join();
+
     std:: string toPrint("");
-    while (!terminate && !(connectionHandler->getLine(toPrint))) {
-         cout << toPrint << endl;
-         if (toPrint.substr(4,5) == "3") {
-             terminate = true;
-         }
+    while (!terminate) {
+        connectionHandler->getLine(toPrint);
+        cout << "HIII" << endl;
+        cout << toPrint << endl;
+        if (toPrint.substr(4,5) == "3") {
+            terminate = true;
+        }
+
+
     }
 
 

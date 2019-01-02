@@ -19,8 +19,8 @@ using namespace boost;
 
 class Decoder {
 public:
-    Decoder();
-    Decoder(Decoder other);
+    //Decoder();
+
     std::string decode(char nextByte);
 private:
     std::vector<char> bytes;

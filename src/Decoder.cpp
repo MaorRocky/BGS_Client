@@ -14,12 +14,12 @@
 using namespace std;
 using namespace boost;
 
-Decoder::Decoder() {}
+//Decoder::Decoder() {}
 
 std::string Decoder::decode(char nextByte) {
     pushByte(nextByte);
     if (length < 2) {
-        return "";
+        return "I AM STILL NOT A VALID MESSAGE";
     }
     if (length == 2) {
         nextOpcodeBytes[0] = bytes[0];
@@ -148,7 +148,7 @@ std::string Decoder::decode(char nextByte) {
             break;
 
     }
-    return "";
+    return "I AM STILL NOT A VALID MESSAGE";
 }
 
 void Decoder::pushByte(char nextByte) {

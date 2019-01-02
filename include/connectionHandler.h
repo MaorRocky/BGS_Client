@@ -20,9 +20,8 @@ private:
  
 public:
     Decoder decoder;
-    ConnectionHandler(std::string host, short port);
 
-    ConnectionHandler(const ConnectionHandler& other);
+    ConnectionHandler(std::string host, short port);
 
     virtual ~ConnectionHandler();
  
