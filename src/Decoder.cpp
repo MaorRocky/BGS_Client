@@ -19,7 +19,7 @@ Decoder::Decoder() {}
 std::string Decoder::decode(char nextByte) {
     pushByte(nextByte);
     if (length < 2) {
-        return nullptr;
+        return "";
     }
     if (length == 2) {
         nextOpcodeBytes[0] = bytes[0];
@@ -74,7 +74,7 @@ std::string Decoder::decode(char nextByte) {
                 messageOpcode = bytesToShort(messageOpcodeBytes);
                 toReturn += to_string(messageOpcode);
             }
-            else if (messageOpcode == (short)4) { // ACK for follow message
+            else if (length >= 4 && messageOpcode == (short)4) { // ACK for follow message
                 if (length == 6) { // adding number of users
                     toReturn += " ";
                     numOfUsersBytes[0] = bytes[4];
@@ -93,7 +93,7 @@ std::string Decoder::decode(char nextByte) {
                     return tmp;
                 }
             }
-            else if (messageOpcode == (short)7) { // ACK for
+            else if (length >= 4 && messageOpcode == (short)7) { // ACK for user list message
                 if (length == 6) { // adding number of users
                     toReturn += " ";
                     numOfUsersBytes[0] = bytes[4];
@@ -112,11 +112,43 @@ std::string Decoder::decode(char nextByte) {
                     return tmp;
                 }
             }
+            else if (length >= 4 && messageOpcode == (short)8) {
+                if (length == 10) {
+                    char numPosts[2]; // adding number of posts
+                    numPosts[0] = bytes[4];
+                    numPosts[1] = bytes[5];
+                    short posts = bytesToShort(numPosts);
+                    toReturn += to_string(posts);
+                    toReturn += " ";
 
+                    char numFollowers[2]; // adding number of followers
+                    numFollowers[0] = bytes[6];
+                    numFollowers[1] = bytes[7];
+                    short followers = bytesToShort(numFollowers);
+                    toReturn += to_string(followers);
+                    toReturn += " ";
+
+                    char numFollowing[2]; // adding number of following
+                    numFollowing[0] = bytes[8];
+                    numFollowing[1] = bytes[9];
+                    short following = bytesToShort(numFollowing);
+                    toReturn += to_string(following);
+
+                    std::string tmp(toReturn);
+                    reset();
+                    return tmp;
+                }
+            }
+            else if (length == 4 && (messageOpcode == (short)1 || messageOpcode == (short)2 || messageOpcode == (short)3
+            || messageOpcode == (short)5 || messageOpcode == (short)6)) {
+                std::string tmp(toReturn);
+                reset();
+                return toReturn;
+            }
             break;
 
     }
-    return nullptr;
+    return "";
 }
 
 void Decoder::pushByte(char nextByte) {
