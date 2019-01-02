@@ -16,6 +16,8 @@ using namespace boost;
 
 Decoder::Decoder() {}
 
+Decoder::Decoder(Decoder &other) {}
+
 std::string Decoder::decode(char nextByte) {
     pushByte(nextByte);
     if (length < 2) {

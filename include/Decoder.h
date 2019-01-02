@@ -20,7 +20,7 @@ using namespace boost;
 class Decoder {
 public:
     Decoder();
-    Decoder(Decoder other);
+    Decoder(Decoder &other);
     std::string decode(char nextByte);
 private:
     std::vector<char> bytes;

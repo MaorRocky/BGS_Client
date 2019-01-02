@@ -15,14 +15,17 @@ private:
 	const short port_;
 	boost::asio::io_service io_service_;   // Provides core I/O functionality
 	tcp::socket socket_;
+	Decoder decoder;
 
 
  
 public:
-    Decoder decoder;
+
     ConnectionHandler(std::string host, short port);
 
     ConnectionHandler(const ConnectionHandler& other);
+
+    void addDecoder(Decoder decoder);
 
     virtual ~ConnectionHandler();
  
