@@ -14,11 +14,10 @@
 using namespace std;
 using namespace boost;
 
-//Decoder::Decoder() {}
 
 
 std::string Decoder::decode(char nextByte) {
-    //cout << std::to_string(nextByte) << endl;
+
     if (length == 0) {
         bytes.clear();
     }
@@ -31,9 +30,6 @@ std::string Decoder::decode(char nextByte) {
         nextOpcodeBytes[0] = bytes[0];
         nextOpcodeBytes[1] = bytes[1];
         nextOpcode = bytesToShort(nextOpcodeBytes);
-        //cout << std::to_string(nextOpcode) << endl;
-        //cout << std::to_string(bytes[0]) << endl;
-        //cout << std::to_string(bytes[1]) << endl;
     }
     switch(nextOpcode) {
         case 9:
@@ -61,7 +57,7 @@ std::string Decoder::decode(char nextByte) {
 
         case 11:
             if (length == 2) {
-                toReturn += to_string(nextOpcode);
+                toReturn += "ERROR";
                 toReturn += " ";
             }
             if (length == 4) {
@@ -76,7 +72,6 @@ std::string Decoder::decode(char nextByte) {
             break;
 
         case 10:
-            cout << "I am in case 10" << endl;
             if (length == 4) { // adding message opcode
                 toReturn += "ACK ";
                 messageOpcodeBytes[0] = bytes[2];
