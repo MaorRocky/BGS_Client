@@ -9,7 +9,9 @@ using std::endl;
 using std::string;
 
 ConnectionHandler::ConnectionHandler(string host, short port) : host_(host), port_(port), io_service_(),
-                                                                socket_(io_service_) {}
+                                                                socket_(io_service_) {
+
+}
 
 ConnectionHandler::~ConnectionHandler() {
     close();
@@ -41,7 +43,6 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
     try {
         while (!error && bytesToRead > tmp) {
             tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
-
         }
         if (error)
             throw boost::system::system_error(error);
@@ -71,7 +72,7 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
 }
 
 bool ConnectionHandler::getLine(std::string &line) {
-    return getFrameAscii(line, '\0');
+    return getFrameAscii(line);
 }
 
 char ConnectionHandler::getNextByte() {
@@ -88,15 +89,14 @@ void ConnectionHandler::sendOpcode(char *opcodeBytes) {
     sendBytes(opcodeBytes, 2);
 }
 
-bool ConnectionHandler::getFrameAscii(std::string &frame, char delimiter) {
+bool ConnectionHandler::getFrameAscii(std::string &frame) {
     char ch;
     // Stop when we encounter the null character. 
     // Notice that the null character is not appended to the frame string.
     try {
         do {
-            getBytes(&ch, 1);
-            frame.append(1, ch);
-        } while (delimiter != ch);
+            frame = decoder.decode(getBytes(&ch, 1));
+        } while (frame.empty());
     } catch (std::exception &e) {
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;

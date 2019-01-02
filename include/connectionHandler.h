@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include <boost/asio.hpp>
+#include "Decoder.h"
+
 
 using boost::asio::ip::tcp;
 
@@ -12,9 +14,12 @@ private:
 	const std::string host_;
 	const short port_;
 	boost::asio::io_service io_service_;   // Provides core I/O functionality
-	tcp::socket socket_; 
+	tcp::socket socket_;
+
+
  
 public:
+    Decoder decoder;
     ConnectionHandler(std::string host, short port);
 
     ConnectionHandler(const ConnectionHandler& other);
@@ -42,7 +47,7 @@ public:
  
     // Get Ascii data from the server until the delimiter character
     // Returns false in case connection closed before null can be read.
-    bool getFrameAscii(std::string& frame, char delimiter);
+    bool getFrameAscii(std::string& frame);
  
     // Send a message to the remote host.
     // Returns false in case connection is closed before all the data is sent.
