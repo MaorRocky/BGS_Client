@@ -108,6 +108,7 @@ std::string Decoder::decode(char nextByte) {
                 }
             } else if (length >= 4 && messageOpcode == (short) 8) {
                 if (length == 10) {
+                    toReturn += " ";
                     char numPosts[2]; // adding number of posts
                     numPosts[0] = bytes[4];
                     numPosts[1] = bytes[5];
