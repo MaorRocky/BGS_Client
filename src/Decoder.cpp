@@ -22,8 +22,6 @@ std::string Decoder::decode(char nextByte) {
        cout<<"x is : " << to_string(x);
     }
 
-
-
     if (length == 2) {
         cout<<"x"<<endl;
         cout<<to_string(x)<<endl;
