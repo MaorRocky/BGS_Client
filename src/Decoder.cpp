@@ -14,17 +14,25 @@
 using namespace std;
 using namespace boost;
 
-//Decoder::Decoder() {}
 
 std::string Decoder::decode(char nextByte) {
-    pushByte(nextByte);
-    if (length < 2) {
-        return "I AM STILL NOT A VALID MESSAGE";
+   if (counter ==0){
+       x = nextByte;
+       counter =1;
+       cout<<"x is : " << to_string(x);
     }
+
+
+
     if (length == 2) {
-        nextOpcodeBytes[0] = bytes[0];
-        nextOpcodeBytes[1] = bytes[1];
+        cout<<"x"<<endl;
+        cout<<to_string(x)<<endl;
+        cout<<"y"<<endl;
+        cout<<to_string(y)<<endl;
+        nextOpcodeBytes[0] = x;
+        nextOpcodeBytes[1] = y;
         nextOpcode = bytesToShort(nextOpcodeBytes);
+        cout<<nextOpcode<<endl;
     }
     switch(nextOpcode) {
         case 9:

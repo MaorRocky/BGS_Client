@@ -19,14 +19,16 @@ using namespace boost;
 
 class Decoder {
 public:
-    //Decoder();
+    char x;
+    char y;
 
     std::string decode(char nextByte);
 private:
+    int counter = 0;
     std::vector<char> bytes;
     char nextOpcodeBytes[2];
     short nextOpcode;
-    int length;
+    int length=0;
     int nextZeroByte;
     char numOfUsersBytes[2];
     short numOfUsers;
