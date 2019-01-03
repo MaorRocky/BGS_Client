@@ -32,11 +32,12 @@ std::string Decoder::decode(char nextByte) {
                     toReturn += "Public ";
                 }
             }
-            if (nextByte == '\0') {
+            if (length > 3 && nextByte == '\0') {
                 nextZeroByte++;
             }
             if (nextZeroByte == 2) {
-                fromVectorToString(bytes, toReturn, 3);
+                string str = getMessageContent(bytes, 3);
+                toReturn += str;
                 std::string tmp(toReturn);
                 reset();
                 return tmp;
@@ -76,12 +77,12 @@ std::string Decoder::decode(char nextByte) {
                     toReturn += to_string(numOfUsers);
                     toReturn += " ";
                 }
-                if (nextByte == '\0') {
+                if (nextByte == '\0' && length > 6) {
                     nextZeroByte++;
                 }
-                if ((int) numOfUsers == nextZeroByte) { // adding usernames
-                    string userNames = getUserName(bytes, 6);
-                    //fromVectorToString(bytes, toReturn, 6);
+                if ((nextZeroByte != 0) && (int) numOfUsers == nextZeroByte) { // adding usernames
+                    string userNames = getMessageContent(bytes, 6);
+                    toReturn += userNames;
                     std::string tmp(toReturn);
                     reset();
                     return tmp;
@@ -97,12 +98,9 @@ std::string Decoder::decode(char nextByte) {
                 }
                 if (nextByte == '\0' && length > 6) {
                     nextZeroByte++;
-                    cout << "next zero byte = " << nextZeroByte << endl;
                 }
                 if ((nextZeroByte != 0) && (int) numOfUsers == nextZeroByte) { // adding usernames
-                    cout << "I AM IN USERLIST" << endl;
-                    /*fromVectorToString(bytes, toReturn, 6);*/
-                    string userNames = getUserName(bytes, 6);
+                    string userNames = getMessageContent(bytes, 6);
                     toReturn += userNames;
                     std::string tmp(toReturn);
                     reset();
@@ -168,17 +166,8 @@ void Decoder::reset() {
     afterOpcode = false;
 }
 
-void Decoder::fromVectorToString(std::vector<char> bytes, std::string str, int start) {
-    for (int i = start; i < bytes.size(); i++) {
-        if (i < bytes.size() - 1 && bytes[i] == '\0') {
-            str += " ";
-        } else {
-            str.append(&bytes[i]);
-        }
-    }
-}
 
-std::string Decoder::getUserName(std::vector<char> bytes, int start) {
+std::string Decoder::getMessageContent(std::vector<char> bytes, int start) {
     string ret("");
     for (int i = start; i < bytes.size(); i++) {
         if (i < bytes.size() - 1 && bytes[i] == '\0') {
