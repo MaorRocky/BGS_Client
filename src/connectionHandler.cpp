@@ -94,8 +94,9 @@ bool ConnectionHandler::getFrameAscii(std::string &frame) {
     // Notice that the null character is not appended to the frame string.
     try {
         do {
-            getBytes(&ch, 1);
-            frame = decoder.decode(ch);
+            if (getBytes(&ch, 1)) {
+                frame = decoder.decode(ch);
+            }
             //cout << std::to_string(ch) << endl;
         } while (frame == "I AM STILL NOT A VALID MESSAGE");
     } catch (std::exception &e) {
