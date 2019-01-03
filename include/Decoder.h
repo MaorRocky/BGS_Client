@@ -41,6 +41,7 @@ private:
     std::string toReturn;
     void reset();
     void fromVectorToString(std::vector<char> bytes, std::string str, int start);
+    std::string getUserName(std::vector<char>bytes, int start);
 
 
 

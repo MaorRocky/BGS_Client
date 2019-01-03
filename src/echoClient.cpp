@@ -24,10 +24,10 @@ int main(int argc, char *argv[]) {
     std::string toPrint("");
     while (!terminate) {
         connectionHandler->getLine(toPrint);
-//        cout << "TO PRINT:  " << toPrint << endl;
-//        if (toPrint.substr(4,5) == "3") {
-//            terminate = true;
-//        }
+        cout << toPrint << endl;
+       /* if (toPrint.substr(4,5) == "3") {
+            terminate = true;
+        }*/
     }
 
 

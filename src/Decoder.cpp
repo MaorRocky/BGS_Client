@@ -1,19 +1,8 @@
 #include <stdlib.h>
 #include <connectionHandler.h>
-#include <mutex>
-#include <thread>
-#include <bits/stdc++.h>
-#include <boost/algorithm/string.hpp>
-#include <iostream>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <regex>
-#include "Decoder.h"
 
 using namespace std;
 using namespace boost;
-
 
 
 std::string Decoder::decode(char nextByte) {
@@ -31,16 +20,15 @@ std::string Decoder::decode(char nextByte) {
         nextOpcodeBytes[1] = bytes[1];
         nextOpcode = bytesToShort(nextOpcodeBytes);
     }
-    switch(nextOpcode) {
+    switch (nextOpcode) {
         case 9:
-            if (length == 2){
+            if (length == 2) {
                 toReturn += "NOTIFICATION ";
             }
             if (length == 3) {
-                if(nextByte == '0') {
+                if (nextByte == '0') {
                     toReturn += "PM ";
-                }
-                else if (nextByte == '1') {
+                } else if (nextByte == '1') {
                     toReturn += "Public ";
                 }
             }
@@ -79,8 +67,7 @@ std::string Decoder::decode(char nextByte) {
                 messageOpcode = bytesToShort(messageOpcodeBytes);
                 toReturn += to_string(messageOpcode);
                 cout << std::to_string(messageOpcode) << endl;
-            }
-            else if (length >= 4 && messageOpcode == (short)4) { // ACK for follow message
+            } else if (length >= 4 && messageOpcode == (short) 4) { // ACK for follow message
                 if (length == 6) { // adding number of users
                     toReturn += " ";
                     numOfUsersBytes[0] = bytes[4];
@@ -92,14 +79,14 @@ std::string Decoder::decode(char nextByte) {
                 if (nextByte == '\0') {
                     nextZeroByte++;
                 }
-                if ((int)numOfUsers == nextZeroByte) { // adding usernames
-                    fromVectorToString(bytes, toReturn, 6);
+                if ((int) numOfUsers == nextZeroByte) { // adding usernames
+                    string userNames = getUserName(bytes, 6);
+                    //fromVectorToString(bytes, toReturn, 6);
                     std::string tmp(toReturn);
                     reset();
                     return tmp;
                 }
-            }
-            else if (length >= 4 && messageOpcode == (short)7) { // ACK for user list message
+            } else if (length >= 4 && messageOpcode == (short) 7) { // ACK for user list message
                 if (length == 6) { // adding number of users
                     toReturn += " ";
                     numOfUsersBytes[0] = bytes[4];
@@ -108,17 +95,20 @@ std::string Decoder::decode(char nextByte) {
                     toReturn += to_string(numOfUsers);
                     toReturn += " ";
                 }
-                if (nextByte == '\0') {
+                if (nextByte == '\0' && length > 6) {
                     nextZeroByte++;
+                    cout << "next zero byte = " << nextZeroByte << endl;
                 }
-                if ((int)numOfUsers == nextZeroByte) { // adding usernames
-                    fromVectorToString(bytes, toReturn, 6);
+                if ((nextZeroByte != 0) && (int) numOfUsers == nextZeroByte) { // adding usernames
+                    cout << "I AM IN USERLIST" << endl;
+                    /*fromVectorToString(bytes, toReturn, 6);*/
+                    string userNames = getUserName(bytes, 6);
+                    toReturn += userNames;
                     std::string tmp(toReturn);
                     reset();
                     return tmp;
                 }
-            }
-            else if (length >= 4 && messageOpcode == (short)8) {
+            } else if (length >= 4 && messageOpcode == (short) 8) {
                 if (length == 10) {
                     char numPosts[2]; // adding number of posts
                     numPosts[0] = bytes[4];
@@ -145,8 +135,8 @@ std::string Decoder::decode(char nextByte) {
                     return tmp;
                 }
             }
-            if (length == 4 && (messageOpcode == (short)1 || messageOpcode == (short)2 || messageOpcode == (short)3
-            || messageOpcode == (short)5 || messageOpcode == (short)6)) {
+            if (length == 4 && (messageOpcode == (short) 1 || messageOpcode == (short) 2 || messageOpcode == (short) 3
+                                || messageOpcode == (short) 5 || messageOpcode == (short) 6)) {
                 cout << toReturn << endl;
                 std::string tmp(toReturn);
                 reset();
@@ -182,11 +172,24 @@ void Decoder::fromVectorToString(std::vector<char> bytes, std::string str, int s
     for (int i = start; i < bytes.size(); i++) {
         if (i < bytes.size() - 1 && bytes[i] == '\0') {
             str += " ";
-        }
-        else {
-            str += bytes[i];
+        } else {
+            str.append(&bytes[i]);
         }
     }
+}
+
+std::string Decoder::getUserName(std::vector<char> bytes, int start) {
+    string ret("");
+    for (int i = start; i < bytes.size(); i++) {
+        if (i < bytes.size() - 1 && bytes[i] == '\0') {
+            ret += " ";
+        } else {
+            ret += bytes[i];
+        }
+    }
+    cout << ret << endl;
+    return ret;
+
 }
 
 
