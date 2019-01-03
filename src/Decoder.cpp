@@ -15,22 +15,21 @@ using namespace std;
 using namespace boost;
 
 
-std::string Decoder::decode(char nextByte) {
-   if (counter ==0){
-       x = nextByte;
-       counter =1;
-       cout<<"x is : " << to_string(x);
-    }
 
+std::string Decoder::decode(char nextByte) {
+
+    if (length == 0) {
+        bytes.clear();
+    }
+    pushByte(nextByte);
+    if (!afterOpcode && length < 2) {
+        afterOpcode = true;
+        return "I AM STILL NOT A VALID MESSAGE";
+    }
     if (length == 2) {
-        cout<<"x"<<endl;
-        cout<<to_string(x)<<endl;
-        cout<<"y"<<endl;
-        cout<<to_string(y)<<endl;
-        nextOpcodeBytes[0] = x;
-        nextOpcodeBytes[1] = y;
+        nextOpcodeBytes[0] = bytes[0];
+        nextOpcodeBytes[1] = bytes[1];
         nextOpcode = bytesToShort(nextOpcodeBytes);
-        cout<<nextOpcode<<endl;
     }
     switch(nextOpcode) {
         case 9:
@@ -58,7 +57,7 @@ std::string Decoder::decode(char nextByte) {
 
         case 11:
             if (length == 2) {
-                toReturn += to_string(nextOpcode);
+                toReturn += "ERROR";
                 toReturn += " ";
             }
             if (length == 4) {
@@ -79,6 +78,7 @@ std::string Decoder::decode(char nextByte) {
                 messageOpcodeBytes[1] = bytes[3];
                 messageOpcode = bytesToShort(messageOpcodeBytes);
                 toReturn += to_string(messageOpcode);
+                cout << std::to_string(messageOpcode) << endl;
             }
             else if (length >= 4 && messageOpcode == (short)4) { // ACK for follow message
                 if (length == 6) { // adding number of users
@@ -145,8 +145,9 @@ std::string Decoder::decode(char nextByte) {
                     return tmp;
                 }
             }
-            else if (length == 4 && (messageOpcode == (short)1 || messageOpcode == (short)2 || messageOpcode == (short)3
+            if (length == 4 && (messageOpcode == (short)1 || messageOpcode == (short)2 || messageOpcode == (short)3
             || messageOpcode == (short)5 || messageOpcode == (short)6)) {
+                cout << toReturn << endl;
                 std::string tmp(toReturn);
                 reset();
                 return toReturn;
@@ -174,6 +175,7 @@ void Decoder::reset() {
     nextZeroByte = 0;
     toReturn = "";
     nextOpcode = 0;
+    afterOpcode = false;
 }
 
 void Decoder::fromVectorToString(std::vector<char> bytes, std::string str, int start) {

@@ -43,12 +43,15 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
             tmp += socket_.read_some(boost::asio::buffer(bytes + tmp, bytesToRead - tmp), error);
         }
         if (error) {
+            cout << "i have an error" << endl;
             throw boost::system::system_error(error);
         }
     } catch (std::exception &e) {
+        cout << "I am the other problem" << std::endl;
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
     }
+    //cout << std::to_string(bytes[0]) << endl;
     return true;
 }
 
@@ -58,7 +61,6 @@ bool ConnectionHandler::sendBytes(const char bytes[], int bytesToWrite) {
     try {
         while (!error && bytesToWrite > tmp) {
             tmp += socket_.write_some(boost::asio::buffer(bytes + tmp, bytesToWrite - tmp), error);
-            cout<<bytes[0]<<endl;
         }
         if (error)
             throw boost::system::system_error(error);
@@ -91,10 +93,11 @@ bool ConnectionHandler::getFrameAscii(std::string &frame) {
     char ch;
     // Stop when we encounter the null character. 
     // Notice that the null character is not appended to the frame string.
-    cout << "start" << endl;
     try {
         do {
-            frame = decoder.decode(getBytes(&ch, 1));
+            getBytes(&ch, 1);
+            frame = decoder.decode(ch);
+            //cout << std::to_string(ch) << endl;
         } while (frame == "I AM STILL NOT A VALID MESSAGE");
     } catch (std::exception &e) {
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;

@@ -34,6 +34,7 @@ private:
     short numOfUsers;
     char messageOpcodeBytes[2];
     short messageOpcode;
+    bool afterOpcode = false;
 
     void pushByte(char nextByte);
     short bytesToShort(char *bytesArr);
