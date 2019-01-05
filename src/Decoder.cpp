@@ -67,7 +67,6 @@ std::string Decoder::decode(char nextByte) {
                 messageOpcodeBytes[1] = bytes[3];
                 messageOpcode = bytesToShort(messageOpcodeBytes);
                 toReturn += to_string(messageOpcode);
-                cout << std::to_string(messageOpcode) << endl;
             } else if (length >= 4 && messageOpcode == (short) 4) { // ACK for follow message
                 if (length == 6) { // adding number of users
                     toReturn += " ";
@@ -177,7 +176,6 @@ std::string Decoder::getMessageContent(std::vector<char> bytes, int start) {
             ret += bytes[i];
         }
     }
-    cout << ret << endl;
     return ret;
 
 }
