@@ -135,10 +135,9 @@ std::string Decoder::decode(char nextByte) {
             }
             if (length == 4 && (messageOpcode == (short) 1 || messageOpcode == (short) 2 || messageOpcode == (short) 3
                                 || messageOpcode == (short) 5 || messageOpcode == (short) 6)) {
-                cout << toReturn << endl;
                 std::string tmp(toReturn);
                 reset();
-                return toReturn;
+                return tmp;
             }
             break;
 

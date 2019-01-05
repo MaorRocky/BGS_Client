@@ -90,8 +90,6 @@ void ConnectionHandler::sendOpcode(char *opcodeBytes) {
 
 bool ConnectionHandler::getFrameAscii(std::string &frame) {
     char ch;
-    // Stop when we encounter the null character. 
-    // Notice that the null character is not appended to the frame string.
     try {
         do {
             if (getBytes(&ch, 1)) {
