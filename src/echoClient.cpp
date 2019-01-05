@@ -25,17 +25,10 @@ int main(int argc, char *argv[]) {
     while (!terminate) {
         connectionHandler->getLine(toPrint);
         cout << toPrint << endl;
-       /* if (toPrint.substr(4,5) == "3") {
+        if (toPrint == "ACK 3") {
             terminate = true;
-        }*/
+        }
     }
-
-
-
-
-
-
-
 }
 
 

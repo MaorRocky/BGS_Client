@@ -23,6 +23,7 @@ public:
     char y;
 
     std::string decode(char nextByte);
+    bool shouldTerminate();
 private:
     int counter = 0;
     std::vector<char> bytes;
@@ -35,6 +36,7 @@ private:
     char messageOpcodeBytes[2];
     short messageOpcode;
     bool afterOpcode = false;
+    bool terminate = false;
 
     void pushByte(char nextByte);
     short bytesToShort(char *bytesArr);

@@ -67,7 +67,6 @@ std::string Decoder::decode(char nextByte) {
                 messageOpcodeBytes[1] = bytes[3];
                 messageOpcode = bytesToShort(messageOpcodeBytes);
                 toReturn += to_string(messageOpcode);
-                cout << std::to_string(messageOpcode) << endl;
             } else if (length >= 4 && messageOpcode == (short) 4) { // ACK for follow message
                 if (length == 6) { // adding number of users
                     toReturn += " ";
@@ -81,6 +80,7 @@ std::string Decoder::decode(char nextByte) {
                     nextZeroByte++;
                 }
                 if ((nextZeroByte != 0) && (int) numOfUsers == nextZeroByte) { // adding usernames
+                    cout << "I got follow response" << endl;
                     string userNames = getMessageContent(bytes, 6);
                     toReturn += userNames;
                     std::string tmp(toReturn);
@@ -134,12 +134,11 @@ std::string Decoder::decode(char nextByte) {
                     return tmp;
                 }
             }
-            if (length == 4 && (messageOpcode == (short) 1 || messageOpcode == (short) 2 || messageOpcode == (short) 3
-                                || messageOpcode == (short) 5 || messageOpcode == (short) 6)) {
-                cout << toReturn << endl;
+            if (length == 4 && (messageOpcode == (short) 1 || messageOpcode == (short) 2
+                                || messageOpcode == (short) 5 || messageOpcode == (short) 6 || messageOpcode == (short) 3)) {
                 std::string tmp(toReturn);
                 reset();
-                return toReturn;
+                return tmp;
             }
             break;
 
@@ -177,9 +176,12 @@ std::string Decoder::getMessageContent(std::vector<char> bytes, int start) {
             ret += bytes[i];
         }
     }
-    cout << ret << endl;
     return ret;
 
+}
+
+bool Decoder::shouldTerminate() {
+    return terminate;
 }
 
 
