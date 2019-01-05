@@ -147,7 +147,6 @@ void FromKeyBoard::operator()() {
             shortToBytes(opcode, opcodeBytes);
             (*handler).sendOpcode(opcodeBytes);
             // sending username
-//            cout<<results[1]<<endl;
             (*handler).sendLine(results[1]);
         }
     }
