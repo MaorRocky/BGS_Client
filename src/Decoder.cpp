@@ -80,7 +80,6 @@ std::string Decoder::decode(char nextByte) {
                     nextZeroByte++;
                 }
                 if ((nextZeroByte != 0) && (int) numOfUsers == nextZeroByte) { // adding usernames
-                    cout << "I got follow response" << endl;
                     string userNames = getMessageContent(bytes, 6);
                     toReturn += userNames;
                     std::string tmp(toReturn);
