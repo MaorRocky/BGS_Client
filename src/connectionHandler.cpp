@@ -97,7 +97,6 @@ bool ConnectionHandler::getFrameAscii(std::string &frame) {
             if (getBytes(&ch, 1)) {
                 frame = decoder.decode(ch);
             }
-            //cout << std::to_string(ch) << endl;
         } while (frame == "I AM STILL NOT A VALID MESSAGE");
     } catch (std::exception &e) {
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
