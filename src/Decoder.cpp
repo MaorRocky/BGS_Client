@@ -74,11 +74,17 @@ std::string Decoder::decode(char nextByte) {
                     numOfUsersBytes[1] = bytes[5];
                     numOfUsers = bytesToShort(numOfUsersBytes);
                     toReturn += to_string(numOfUsers);
+                    if (numOfUsers == 0) {
+                        std::string tmp(toReturn);
+                        reset();
+                        return tmp;
+                    }
                     toReturn += " ";
                 }
                 if (nextByte == '\0' && length > 6) {
                     nextZeroByte++;
                 }
+
                 if ((nextZeroByte != 0) && (int) numOfUsers == nextZeroByte) { // adding usernames
                     string userNames = getMessageContent(bytes, 6);
                     toReturn += userNames;
