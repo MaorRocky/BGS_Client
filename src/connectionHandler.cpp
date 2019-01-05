@@ -50,7 +50,6 @@ bool ConnectionHandler::getBytes(char bytes[], unsigned int bytesToRead) {
         std::cerr << "recv failed (Error: " << e.what() << ')' << std::endl;
         return false;
     }
-    //cout << std::to_string(bytes[0]) << endl;
     return true;
 }
 
